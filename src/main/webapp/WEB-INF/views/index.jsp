@@ -8,5 +8,6 @@
 </head>
 <body>
 <h1>hello bookshelf</h1>
+<a href="file://c:/22.txt">test</a>
 </body>
 </html>
