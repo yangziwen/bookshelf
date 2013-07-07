@@ -23,13 +23,13 @@ public class CrawlerController {
 	@ResponseBody
 	@RequestMapping("/crawlItEbooks.do")
 	public String crawlItEbooks(Model model,
-			@RequestParam(value="from", defaultValue="1") final Integer from,
-			@RequestParam(value="to", defaultValue="10") final Integer to) {
+			@RequestParam(value="from", required=true) final Integer from,
+			@RequestParam(value="to", required=true) final Integer to,
+			@RequestParam(value="threadNum", defaultValue="5", required=false) Integer threadNum) {
 		if(to<from) {
 			return "'to' should be bigger than 'from'!";
 		}
 		final AtomicInteger atomInt = new AtomicInteger(from);
-		int threadNum = 5;
 		Thread[] threads = new Thread[threadNum];
 		final Book[] books = new Book[to-from+1];
 		for(int i=0; i<threadNum; i++) {
