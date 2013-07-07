@@ -1,5 +1,9 @@
 package net.yangziwen.bookshelf.service;
 
-public class IBookService {
+import net.yangziwen.bookshelf.pojo.Book;
+
+public interface IBookService {
+
+	void saveOrUpdateBook(Book book);
 
 }

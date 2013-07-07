@@ -17,6 +17,8 @@ public class Book {
 	@Column
 	private String name;
 	@Column
+	private String authorName;
+	@Column
 	private String publisher;
 	@Column
 	private String isbn;
@@ -27,13 +29,15 @@ public class Book {
 	@Column
 	private String language;
 	@Column
-	private Long size;
+	private String size;
 	@Column
 	private String format;
 	@Column
+	private String pageUrl;
+	@Column
 	private String downloadUrl;
 	@Column
-	private String frontCoverImgUrl;
+	private String coverImgUrl;
 	@Column
 	private String storagePath;
 	
@@ -81,10 +85,10 @@ public class Book {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	public Long getSize() {
+	public String getSize() {
 		return size;
 	}
-	public void setSize(Long size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 	public String getFormat() {
@@ -99,17 +103,33 @@ public class Book {
 	public void setDownloadUrl(String downloadUrl) {
 		this.downloadUrl = downloadUrl;
 	}
-	public String getFrontCoverImgUrl() {
-		return frontCoverImgUrl;
+	public String getCoverImgUrl() {
+		return coverImgUrl;
 	}
-	public void setFrontCoverImgUrl(String frontCoverImgUrl) {
-		this.frontCoverImgUrl = frontCoverImgUrl;
+	public void setCoverImgUrl(String coverImgUrl) {
+		this.coverImgUrl = coverImgUrl;
 	}
 	public String getStoragePath() {
 		return storagePath;
 	}
 	public void setStoragePath(String storagePath) {
 		this.storagePath = storagePath;
+	}
+
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+
+	public String getPageUrl() {
+		return pageUrl;
+	}
+
+	public void setPageUrl(String pageUrl) {
+		this.pageUrl = pageUrl;
 	}
 	
 	
