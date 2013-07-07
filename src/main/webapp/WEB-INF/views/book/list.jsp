@@ -105,7 +105,7 @@ function downloadBook(pageUrl) {
 							<option value="">请选择...</option>
 							<option>O'Reilly Media</option>
 							<option>Manning</option>
-							<option>Appress</option>
+							<option>Apress</option>
 							<option>Wrox</option>
 							<option>Wiley</option>
 							<option>Packt Publishing</option>
@@ -115,8 +115,8 @@ function downloadBook(pageUrl) {
 							<option>McGraw-Hill</option>
 							<option>Addison-Wesley</option>
 							<option>SitePoint</option>
-							<option>Cisco Press</option>
 							<option>Prentice Hall</option>
+							<option>No Starch Press</option>
 							<option>MicrosoftPress</option>
 						</select>
 					</td>
