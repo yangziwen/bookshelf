@@ -7,6 +7,7 @@ import net.yangziwen.bookshelf.dao.IBasicHibernateDao;
 import net.yangziwen.bookshelf.dao.IBookDao;
 import net.yangziwen.bookshelf.pojo.Book;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -42,8 +43,27 @@ public class BookDaoImpl implements IBookDao {
 	}
 	
 	private String generateHqlByParam(Map<String, Object> param) {
-		StringBuilder hqlBuff = new StringBuilder("from Book where 1 = 1 ");
+		StringBuilder hqlBuff = new StringBuilder("from Book where name is not null ");
+		String publisher = (String) param.get("publisher");
+		if(!StringUtils.isEmpty(publisher)) {
+			hqlBuff.append(" and publisher = :publisher ");
+		}
+		String authorName = (String) param.get("authorName");
+		if(!StringUtils.isEmpty(authorName)) {
+			hqlBuff.append(" and authorName like :authorName ");
+			param.put("authorName", "%" + authorName + "%");
+		}
+		String name = (String) param.get("name");
+		if(!StringUtils.isEmpty(name)) {
+			hqlBuff.append(" and name like :name ");
+			param.put("name", "%" + name + "%");
+		}
+		String year = (String) param.get("year");
+		if(!StringUtils.isEmpty(year)) {
+			hqlBuff.append(" and year = :year ");
+		}
 		return hqlBuff.toString();
 	}
 
 }
+ 

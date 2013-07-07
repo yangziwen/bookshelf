@@ -30,10 +30,19 @@ public class BookController {
 			String publisher,
 			@RequestParam(value="name", required=false)
 			String name,
+			@RequestParam(value="authorName", required=false)
+			String authorName,
 			@RequestParam(value="year", required=false)
 			String year
 		) {
 		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("publisher", publisher);
+		param.put("authorName", authorName);
+		param.put("name", name);
+		param.put("year", year);
+		model.addAllAttributes(param);
+		model.addAttribute("start", start);
+		model.addAttribute("limit", limit);
 		model.addAllAttributes(bookService.getBookPaginateResult(start, limit, param));
 		model.addAttribute("success", Boolean.TRUE);
 		return "book/list";
