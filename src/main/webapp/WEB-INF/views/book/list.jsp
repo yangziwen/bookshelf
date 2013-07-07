@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>index</title>
+<title>电子书列表</title>
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
@@ -38,7 +38,7 @@ function initPageBar(){
 	isNaN(totalCount) && (totalCount = 1);
 	var curPage = Math.floor(start / limit) + 1;
 	var totalPage = Math.floor(totalCount / limit) + (totalCount % limit > 0? 1: 0);
-	$('#J_pageBar').bootstrapPageBar({
+	$('#J_pageBarTop, #J_pageBarBottom').bootstrapPageBar({
 		curPageNum: curPage,
 		totalPageNum: totalPage,
 		maxBtnNum: 10,
@@ -145,7 +145,7 @@ function downloadBook(pageUrl) {
 	<hr/>
 	<div style="width:800px; margin: 10px auto 20px;">
 		<div>
-			<div id="J_pageBar" style="margin-top: 5px;"></div>
+			<div id="J_pageBarTop" style="margin-top: 5px;"></div>
 		</div>
 		<table class="table table-bordered table-condensed table-hover" style="width: 100%;">
 			<tbody>
@@ -169,6 +169,9 @@ function downloadBook(pageUrl) {
 				</c:forEach>
 			</tbody>
 		</table>
+		<div>
+			<div id="J_pageBarBottom" style="margin-top: 5px;"></div>
+		</div>
 	</div>
 </div>
 </body>

@@ -4,10 +4,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>index</title>
+<title>首页</title>
+<link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 </head>
 <body>
-<h1>hello bookshelf</h1>
-<a href="file://c:/22.txt">test</a>
+<div id="J_wrapper" style="margin-top: 80px; text-align: center;">
+	<h1>Welcome!</h1>
+	<br/>
+	<br/>
+	<a href="./book/list.do" style="font-size: 25px;">前往电子书列表</a>
+</div>
 </body>
 </html>
