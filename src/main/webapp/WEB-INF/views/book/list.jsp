@@ -34,7 +34,7 @@ function initPageBar(){
 	var limit = parseInt('${limit}');
 	var totalCount = parseInt('${totalCount}');
 	isNaN(start) && (start = 0);
-	isNaN(limit) && (limit = 10);
+	isNaN(limit) && (limit = 20);
 	isNaN(totalCount) && (totalCount = 1);
 	var curPage = Math.floor(start / limit) + 1;
 	var totalPage = Math.floor(totalCount / limit) + (totalCount % limit > 0? 1: 0);
@@ -55,15 +55,32 @@ function initPageBar(){
 	});
 }
 
+function downloadBook(pageUrl) {
+	if(!pageUrl) {
+		alert('参数有误!');
+		return;
+	}
+	$.post('./getBookDownloadLink.do',{pageUrl: pageUrl}, function(downloadUrl){
+		if(!downloadUrl) {
+			alert('下载链接获取失败!');
+			return;
+		}
+		window.open(downloadUrl, 'bookDownloadFrame');
+	});
+}
+
 </script>
 </head>
 <body>
+<div style="display:none;">
+	<iframe name="bookDownloadFrame"></iframe>
+</div>
 <div id="J_wrapper" style="margin: 30px 0px;">
 	<h2 style="text-align: center;">IT-EBOOKS电子书列表</h2>
 	<div style="width: 700px; margin: 20px auto 10px;">
 		<form id="J_queryForm" action="./list.do">
 			<input type="hidden" id="J_start" name="start" value="0" />
-			<input type="hidden" id="J_limit" name="limit" value="10" />
+			<input type="hidden" id="J_limit" name="limit" value="20" />
 			<table style="width: 100%; margin: 0px auto;">
 				<tr>
 					<td style="text-align: right">
@@ -143,8 +160,9 @@ function initPageBar(){
 							<h4>作&nbsp;&nbsp;&nbsp;&nbsp;者:&nbsp;&nbsp;&nbsp;&nbsp;${book.authorName}</h4>
 							<h4>年&nbsp;&nbsp;&nbsp;&nbsp;份:&nbsp;&nbsp;&nbsp;&nbsp;${book.year}</h4>
 							<h4>页&nbsp;&nbsp;&nbsp;&nbsp;数:&nbsp;&nbsp;&nbsp;&nbsp;${book.pages }</h4>
+							<h4>大&nbsp;&nbsp;&nbsp;&nbsp;小:&nbsp;&nbsp;&nbsp;&nbsp;${book.size }</h4>
 							<h4>
-								<a href="###">下&nbsp;&nbsp;&nbsp;&nbsp;载</a>
+								<a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a>
 							</h4>
 						</td>
 					</tr>
