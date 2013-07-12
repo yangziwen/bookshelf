@@ -108,7 +108,11 @@ public class ItEbooksCrawler {
 		}
 		Book book = new Book();
 		book.setName(parameter.get("Buy"));
-		book.setAuthorName(parameter.get("By"));
+		String authorName = parameter.get("By");
+		if(authorName != null){
+			int len = authorName.length() / 2;
+			book.setAuthorName(authorName.substring(0, len));
+		}
 		book.setPublisher(parameter.get("Publisher"));
 		book.setIsbn(parameter.get("ISBN"));
 		book.setYear(parameter.get("Year"));
