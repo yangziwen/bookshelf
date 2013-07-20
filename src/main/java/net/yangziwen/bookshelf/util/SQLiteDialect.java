@@ -11,12 +11,11 @@ package net.yangziwen.bookshelf.util;
 import java.sql.Types;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
+import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
-import org.hibernate.Hibernate;
 
 public class SQLiteDialect extends Dialect {
 	public SQLiteDialect() {
