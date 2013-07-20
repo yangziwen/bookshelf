@@ -19,7 +19,7 @@
 	<bean id="dataSource"
 		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.sqlite.JDBC" />
-		<property name="url" value="jdbc:sqlite:db\bookshelf.db" />
+		<property name="url" value="jdbc:sqlite:#{systemProperties['catalina.home']}/../db/bookshelf.db" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean>
