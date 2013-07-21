@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.Reader;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +42,7 @@ public class ItEbooksCrawler {
 	
 	private LinkContentHandler linkHandler;
 
+	@SuppressWarnings("static-access")
 	public Book crawlPage(String pageUrl) throws Exception {
 		if(StringUtils.isEmpty(pageUrl)){
 			return null;
@@ -147,7 +147,7 @@ public class ItEbooksCrawler {
 	}
 	
 	private HttpEntity getResponseEntity(String uri) {
-		HttpClient client = new DefaultHttpClient(this.cm);
+		HttpClient client = new DefaultHttpClient(ItEbooksCrawler.cm);
 		HttpGet get = new HttpGet(uri);
 		HttpResponse response;
 		try {
@@ -170,13 +170,13 @@ public class ItEbooksCrawler {
 		}
 	}
 	
-	private void close(Writer writer) {
-		try {
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void close(Writer writer) {
+//		try {
+//			writer.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public void close(InputStream in) {
 		try {
@@ -225,10 +225,5 @@ public class ItEbooksCrawler {
 			
 		}
 		
-	}
-	
-	public static void main(String[] args) throws Exception {
-		ItEbooksCrawler crawler = new ItEbooksCrawler();
-		Book book = crawler.crawlPage("http://it-ebooks.info/book/483/");
 	}
 }
