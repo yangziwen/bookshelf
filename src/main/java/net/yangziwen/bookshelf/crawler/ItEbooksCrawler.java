@@ -82,11 +82,11 @@ public class ItEbooksCrawler {
 			if(line.length() == 0) {
 				continue;
 			}
-			String[] arr = line.split(":");
-			if(arr == null || arr.length < 2) {
+			int colonPos = line.indexOf(":");
+			if(colonPos == -1) {
 				continue;
 			}
-			resultMap.put(arr[0].trim(), arr[1].trim());
+			resultMap.put(line.substring(0, colonPos).trim(), line.substring(colonPos + 1).trim());
 		}
 		resultMap.put("PageUrl", pageUrl);
 		close(reader);
