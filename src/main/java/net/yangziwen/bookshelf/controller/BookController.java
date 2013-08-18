@@ -30,6 +30,9 @@ public class BookController {
 	@Autowired
 	private IBookService bookService;
 	
+	/**
+	 * @see net.yangziwen.bookshelf.dao.impl.BookDaoImpl#getBookPaginateResult(int, int, Map)
+	 */
 	@RequestMapping("/list.do")
 	public String list(Model model,
 			@RequestParam(value="start", required=false, defaultValue="0")
