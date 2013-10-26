@@ -38,16 +38,20 @@ public class CrawlerController {
 			threads[i] = new Thread(new Runnable(){
 				@Override
 				public void run() {
-					int n = 0;
+					int n = 0, cnt = 0;
 					while((n = atomInt.getAndIncrement()) <= to) {
+						long startTime = System.currentTimeMillis();
 						Book book = doCrawlBook(n, DEFAULT_MAX_FAILED_TIMES);
 						if(book != null){
-							System.out.println(n + ": " + book.getName());
 							books[n-from] = book;
+							long finishTime = System.currentTimeMillis();
+							System.out.println(n + ": " + book.getName() +  " [by " + Thread.currentThread().getName() + " using " + (finishTime - startTime) / 1000.0 +  "s]");
 						}
+						cnt ++;
 					}
+					System.out.println("### " + Thread.currentThread().getName() + " exit, and crawled " + cnt + " books!");
 				}
-			}, "crawler " + i);
+			}, "crawler-" + i);
 			threads[i].start();
 		}
 		for(int i=0, l=threads.length; i<l; i++) {
@@ -72,7 +76,7 @@ public class CrawlerController {
 		if(i%50 > 0) {
 			System.out.println(i + " books are saved!");
 		}
-		System.out.println("finished");
+		System.out.println("persistence task finished");
 		return "finished";
 	}
 	
@@ -80,17 +84,31 @@ public class CrawlerController {
 		if(maxFailedTimes <= 0) {
 			maxFailedTimes = 1;
 		}
-		String pageUrl = "http://it-ebooks.info/book/" + n;
-		ItEbooksCrawler crawler = new ItEbooksCrawler();
+		final String pageUrl = "http://it-ebooks.info/book/" + n;
+		final ItEbooksCrawler crawler = new ItEbooksCrawler();
+		final Book[] bookReceiver = new Book[maxFailedTimes];
 		Book book = null;
 		int failedTimes = 0;
-		while(book == null) {
+		while(bookReceiver[failedTimes] == null) {
 			if(failedTimes >= maxFailedTimes) {
 				break;
 			}
+			final int currentFailedTimes = failedTimes;
 			try {
-				book = crawler.crawlPage(pageUrl);
-				if(book != null) {
+				Thread crawlerThread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							bookReceiver[currentFailedTimes] = crawler.crawlPage(pageUrl);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				crawlerThread.start();
+				crawlerThread.join(60000);	// 先暂时写成这样，以后再继续研究concurrency
+				if(bookReceiver[currentFailedTimes] != null) {
+					book = bookReceiver[currentFailedTimes];
 					break;
 				} else {
 					throw new RuntimeException("failed to get a valid book result!");

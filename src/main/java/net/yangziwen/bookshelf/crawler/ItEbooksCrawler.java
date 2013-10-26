@@ -71,6 +71,7 @@ public class ItEbooksCrawler {
 			}
 		}
 		if(!connAvailable) {
+			close(reader);
 			close(in);
 			close(pipedIn);
 			throw new RuntimeException("connection timeout in crawlPage process!");
@@ -91,8 +92,8 @@ public class ItEbooksCrawler {
 		resultMap.put("PageUrl", pageUrl);
 		close(reader);
 		close(in);
-		parserThread.join();
-		
+		close(pipedIn);
+//		parserThread.join();
 		return buildNewBook(resultMap, this.linkHandler);
 	}
 	
