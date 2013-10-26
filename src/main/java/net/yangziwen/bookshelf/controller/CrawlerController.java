@@ -6,6 +6,7 @@ import net.yangziwen.bookshelf.crawler.ItEbooksCrawler;
 import net.yangziwen.bookshelf.pojo.Book;
 import net.yangziwen.bookshelf.service.IBookService;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/crawler")
 public class CrawlerController {
 	
+	private Logger logger = Logger.getLogger(getClass());
+
 	private static final int DEFAULT_MAX_FAILED_TIMES = 10;
 	
 	@Autowired
@@ -45,11 +48,11 @@ public class CrawlerController {
 						if(book != null){
 							books[n-from] = book;
 							long finishTime = System.currentTimeMillis();
-							System.out.println(n + ": " + book.getName() +  " [by " + Thread.currentThread().getName() + " using " + (finishTime - startTime) / 1000.0 +  "s]");
+							logger.info(n + ": " + book.getName() +  " [by " + Thread.currentThread().getName() + " using " + (finishTime - startTime) / 1000.0 +  "s]");
 						}
 						cnt ++;
 					}
-					System.out.println("### " + Thread.currentThread().getName() + " exit, and crawled " + cnt + " books!");
+					logger.info("### " + Thread.currentThread().getName() + " exit, and crawled " + cnt + " books!");
 				}
 			}, "crawler-" + i);
 			threads[i].start();
@@ -61,7 +64,7 @@ public class CrawlerController {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("crawl task finished");
+		logger.info("crawl task finished");
 		int i = 0;
 		for(Book book: books) {
 			if(book == null) {
@@ -70,13 +73,13 @@ public class CrawlerController {
 			bookService.saveOrUpdateBook(book);
 			i++;
 			if(i%50 == 0) {
-				System.out.println(i + " books are saved!");
+				logger.info(i + " books are saved!");
 			}
 		}
 		if(i%50 > 0) {
-			System.out.println(i + " books are saved!");
+			logger.info(i + " books are saved!");
 		}
-		System.out.println("persistence task finished");
+		logger.info("persistence task finished");
 		return "finished";
 	}
 	
@@ -114,8 +117,8 @@ public class CrawlerController {
 					throw new RuntimeException("failed to get a valid book result!");
 				}
 			} catch (Exception e) {
-				System.err.println("Thread: [" + Thread.currentThread().getName() +  "] failed " + (++failedTimes) + " times to crawl book [" + pageUrl + "]");
-				System.err.println(e.getMessage());
+				logger.error("Thread: [" + Thread.currentThread().getName() +  "] failed " + (++failedTimes) + " times to crawl book [" + pageUrl + "]");
+				logger.error(e.getMessage());
 			}
 		}
 		return book;
