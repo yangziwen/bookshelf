@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/crawler")
 public class CrawlerController {
 	
+	private static final int DEFAULT_MAX_FAILED_TIMES = 10;
+	
 	@Autowired
 	private IBookService bookService;
 
@@ -38,19 +40,14 @@ public class CrawlerController {
 				public void run() {
 					int n = 0;
 					while((n = atomInt.getAndIncrement()) <= to) {
-						String pageUrl = "http://it-ebooks.info/book/" + n;
-						try {
-							Book book = new ItEbooksCrawler().crawlPage(pageUrl);
-							if(book != null){
-								System.out.println(n + ": " + book.getName());
-								books[n-from] = book;
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
+						Book book = doCrawlBook(n, DEFAULT_MAX_FAILED_TIMES);
+						if(book != null){
+							System.out.println(n + ": " + book.getName());
+							books[n-from] = book;
 						}
 					}
 				}
-			});
+			}, "crawler " + i);
 			threads[i].start();
 		}
 		for(int i=0, l=threads.length; i<l; i++) {
@@ -60,12 +57,49 @@ public class CrawlerController {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("crawl task finished");
+		int i = 0;
 		for(Book book: books) {
 			if(book == null) {
 				continue;
 			}
 			bookService.saveOrUpdateBook(book);
+			i++;
+			if(i%50 == 0) {
+				System.out.println(i + " books are saved!");
+			}
 		}
+		if(i%50 > 0) {
+			System.out.println(i + " books are saved!");
+		}
+		System.out.println("finished");
 		return "finished";
+	}
+	
+	private Book doCrawlBook(int n, int maxFailedTimes) {
+		if(maxFailedTimes <= 0) {
+			maxFailedTimes = 1;
+		}
+		String pageUrl = "http://it-ebooks.info/book/" + n;
+		ItEbooksCrawler crawler = new ItEbooksCrawler();
+		Book book = null;
+		int failedTimes = 0;
+		while(book == null) {
+			if(failedTimes >= maxFailedTimes) {
+				break;
+			}
+			try {
+				book = crawler.crawlPage(pageUrl);
+				if(book != null) {
+					break;
+				} else {
+					throw new RuntimeException("failed to get a valid book result!");
+				}
+			} catch (Exception e) {
+				System.err.println("Thread: [" + Thread.currentThread().getName() +  "] failed " + (++failedTimes) + " times to crawl book [" + pageUrl + "]");
+				System.err.println(e.getMessage());
+			}
+		}
+		return book;
 	}
 }

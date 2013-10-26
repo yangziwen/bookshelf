@@ -141,7 +141,7 @@ public class ItEbooksCrawler {
 		SchemeRegistry schemeRegistry = new SchemeRegistry();
 		schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
 		PoolingClientConnectionManager cm = new PoolingClientConnectionManager(schemeRegistry);
-		cm.setMaxTotal(200);
+		cm.setMaxTotal(50);
 		cm.setDefaultMaxPerRoute(20);
 		return cm;
 	}
