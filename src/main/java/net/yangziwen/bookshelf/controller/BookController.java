@@ -1,6 +1,7 @@
 package net.yangziwen.bookshelf.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.yangziwen.bookshelf.service.IBookService;
@@ -87,5 +88,29 @@ public class BookController {
 		} catch (Exception e) {
 			return "";
 		}
+	}
+	
+	/**
+	 * 添加一个生成更新数据的sql的接口
+	 */
+	@ResponseBody
+	@RequestMapping("/getBookUpdateSql.do")
+	public String getBookUpdateSql(
+			@RequestParam(value="from", defaultValue="0")
+			Integer from,
+			@RequestParam(value="start", defaultValue="0")
+			Integer start,
+			@RequestParam(value="limit", defaultValue="50")
+			Integer limit) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("minId", Long.valueOf(from));
+		List<String> sqlList = bookService.generateInsertSqlForBookList(start, limit, param);
+		StringBuilder htmlBuff = new StringBuilder()
+			.append("<html><body>");
+		for(String sql: sqlList) {
+			htmlBuff.append("<span>").append(sql).append("</span><br/>");
+		}
+		htmlBuff.append("</body></html>");
+		return htmlBuff.toString();
 	}
 }

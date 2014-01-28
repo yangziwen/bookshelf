@@ -9,6 +9,6 @@ public class IndexController {
 
 	@RequestMapping({"/", "/index.do"})
 	public String index(){
-		return "index";
+		return "redirect:/book/list.do";
 	}
 }

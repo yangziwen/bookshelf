@@ -62,6 +62,10 @@ public class BookDaoImpl implements IBookDao {
 		if(!StringUtils.isEmpty(year)) {
 			hqlBuff.append(" and year = :year ");
 		}
+		Long minId = (Long) param.get("minId");
+		if(minId != null && minId > 0) {
+			hqlBuff.append(" and id >= :minId");
+		}
 		return hqlBuff.toString();
 	}
 
