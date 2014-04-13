@@ -109,7 +109,7 @@ public class CrawlerController {
 					}
 				});
 				crawlerThread.start();
-				crawlerThread.join(60000);	// 先暂时写成这样，以后再继续研究concurrency
+				crawlerThread.join(60000);	// 鍏堟殏鏃跺啓鎴愯繖鏍凤紝浠ュ悗鍐嶇户缁爺绌禼oncurrency
 				if(bookReceiver[currentFailedTimes] != null) {
 					book = bookReceiver[currentFailedTimes];
 					break;

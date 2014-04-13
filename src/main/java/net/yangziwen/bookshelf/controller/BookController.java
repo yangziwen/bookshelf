@@ -54,6 +54,7 @@ public class BookController {
 		param.put("authorName", authorName);
 		param.put("name", name);
 		param.put("year", year);
+		param.put("orderBy", " id desc ");
 		model.addAllAttributes(param);
 		model.addAttribute("start", start);
 		model.addAttribute("limit", limit);

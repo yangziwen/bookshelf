@@ -66,6 +66,10 @@ public class BookDaoImpl implements IBookDao {
 		if(minId != null && minId > 0) {
 			hqlBuff.append(" and id >= :minId");
 		}
+		String orderBy = (String) param.get("orderBy");
+		if(StringUtils.isNotBlank(orderBy)) {
+			hqlBuff.append(" order by " + orderBy);
+		}
 		return hqlBuff.toString();
 	}
 
