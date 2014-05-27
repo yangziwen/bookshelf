@@ -7,6 +7,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>电子书列表</title>
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+<style>
+.detail-block {
+	overflow: hidden;
+}
+
+.detail-block > div {
+	float: left;
+}
+
+.detail-block h4 {
+	margin: 6px auto;
+}
+
+.detail-label {
+	width: 80px;
+}
+
+.detail-content {
+	max-width: 490px;
+}
+</style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrapPageBar.js"></script>
@@ -155,15 +176,48 @@ function downloadBook(pageUrl) {
 							<img width="200" src="http://it-ebooks.info/${book.coverImgUrl}"/>
 						</td>
 						<td>
-							<h4>书&nbsp;&nbsp;&nbsp;&nbsp;名:&nbsp;&nbsp;&nbsp;&nbsp;${book.name}</h4>
-							<h4>出版社:&nbsp;&nbsp;&nbsp;&nbsp;${book.publisher}</h4>
-							<h4>作&nbsp;&nbsp;&nbsp;&nbsp;者:&nbsp;&nbsp;&nbsp;&nbsp;${book.authorName}</h4>
-							<h4>年&nbsp;&nbsp;&nbsp;&nbsp;份:&nbsp;&nbsp;&nbsp;&nbsp;${book.year}</h4>
-							<h4>页&nbsp;&nbsp;&nbsp;&nbsp;数:&nbsp;&nbsp;&nbsp;&nbsp;${book.pages }</h4>
-							<h4>大&nbsp;&nbsp;&nbsp;&nbsp;小:&nbsp;&nbsp;&nbsp;&nbsp;${book.size }</h4>
-							<h4>
-								<a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a>
-							</h4>
+							<div class="detail-block">
+								<div class="detail-label">
+									<h4>书&nbsp;&nbsp;&nbsp;&nbsp;名:</h4>
+								</div>
+								<div class="detail-content"><h4>${book.name}</h4></div>
+							</div>
+							<div class="detail-block">
+								<div class="detail-label">
+									<h4>出版社:</h4>
+								</div>
+								<div class="detail-content"><h4>${book.publisher}</h4></div>
+							</div>
+							<div class="detail-block">
+								<div class="detail-label">
+									<h4>作&nbsp;&nbsp;&nbsp;&nbsp;者:</h4>
+								</div>
+								<div class="detail-content"><h4>${book.authorName}</h4></div>
+							</div>
+							<div class="detail-block">
+								<div class="detail-label">
+									<h4>年&nbsp;&nbsp;&nbsp;&nbsp;份:</h4>
+								</div>
+								<div class="detail-content"><h4>${book.year}</h4></div>
+							</div>
+							<div class="detail-block">
+								<div class="detail-label">
+									<h4>页&nbsp;&nbsp;&nbsp;&nbsp;数:</h4>
+								</div>
+								<div class="detail-content"><h4>${book.pages}</h4></div>
+							</div>
+							<div class="detail-block">
+								<div class="detail-label">
+									<h4>大&nbsp;&nbsp;&nbsp;&nbsp;小:</h4>
+								</div>
+								<div class="detail-content"><h4>${book.size}</h4></div>
+							</div>
+							<div class="detail-block">
+								<h4>
+									<!-- <a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a> -->
+									<a href="${book.pageUrl}" target="_blank">下载页</a>
+								</h4>
+							</div>
 						</td>
 					</tr>
 				</c:forEach>
