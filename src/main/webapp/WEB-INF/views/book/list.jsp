@@ -214,7 +214,7 @@ function downloadBook(pageUrl) {
 							</div>
 							<div class="detail-block">
 								<h4>
-									<!-- <a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a> -->
+									<%-- <a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a> --%>
 									<a href="${book.pageUrl}" target="_blank">下载页</a>
 								</h4>
 							</div>

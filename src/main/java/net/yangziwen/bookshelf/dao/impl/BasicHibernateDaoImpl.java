@@ -72,7 +72,7 @@ public class BasicHibernateDaoImpl implements IBasicHibernateDao {
 	 * 
 	 * @param hql
 	 * @param param
-	 * @param needConvert: true±íÃ÷hql±¾Éí²»ÊÇÒ»¸öÈ¡countµÄhql£¬²»ĞèÒª×öselect count(*)µÄÌæ»»
+	 * @param needConvert: trueè¡¨æ˜hqlæœ¬èº«ä¸æ˜¯ä¸€ä¸ªå–countçš„hqlï¼Œä¸éœ€è¦åšselect count(*)çš„æ›¿æ¢
 	 * @return
 	 */
 	@Override
@@ -113,7 +113,7 @@ public class BasicHibernateDaoImpl implements IBasicHibernateDao {
 	}
 	
 	/**
-	 * »ñÈ¡sql/hqlÖĞµÄËùÓĞÕ¼Î»·û(ĞÎÈç":XXX")
+	 * è·å–sql/hqlä¸­çš„æ‰€æœ‰å ä½ç¬¦(å½¢å¦‚":XXX")
 	 * @author zyang
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class BasicHibernateDaoImpl implements IBasicHibernateDao {
 		if(sql.indexOf(":") == -1){
 			return Collections.<String>emptyList();
 		}
-		// ÌŞ³ısqlÖĞµÄ×Ö·û´®
+		// å‰”é™¤sqlä¸­çš„å­—ç¬¦ä¸²
 		StringBuilder clearedSqlBuff = new StringBuilder();
 		int idx1 = 0, idx2 = 0, idx = 0, minIdx = 0;
 		int sqlLen = sql.length();
@@ -142,7 +142,7 @@ public class BasicHibernateDaoImpl implements IBasicHibernateDao {
 			idx = (idx1 < idx2? sql.indexOf("'", idx1 + 1): sql.indexOf("\"", idx2 + 1)) + 1;
 		}
 		String clearedSql = clearedSqlBuff.toString();
-		// °´Ç°×º":"²éÕÒsqlÖĞµÄÕ¼Î»·û
+		// æŒ‰å‰ç¼€":"æŸ¥æ‰¾sqlä¸­çš„å ä½ç¬¦
 		List<String> placeHolderList = new LinkedList<String>();
 		String prefix = ":";
 		int clearedSqlLen = clearedSql.length();
@@ -153,7 +153,7 @@ public class BasicHibernateDaoImpl implements IBasicHibernateDao {
 			return Collections.<String>emptyList();
 		}
 		while(beginIdx != -1){
-			beginIdx += prefixLen;	// Õ¼Î»·ûµÄµÚÒ»¸ö×ÖÄ¸
+			beginIdx += prefixLen;	// å ä½ç¬¦çš„ç¬¬ä¸€ä¸ªå­—æ¯
 			endIdx = beginIdx;
 			char c;
 			while(endIdx < clearedSqlLen){
@@ -173,7 +173,7 @@ public class BasicHibernateDaoImpl implements IBasicHibernateDao {
 	}
 	
 	/**
-	 * paramÖĞµÄvalue×ªLongµÄ¹¤¾ß·½·¨£¬Ä¬ÈÏ»á¸²¸ÇparamÖĞµÄvalue
+	 * paramä¸­çš„valueè½¬Longçš„å·¥å…·æ–¹æ³•ï¼Œé»˜è®¤ä¼šè¦†ç›–paramä¸­çš„value
 	 */
 	@Override
 	public Long convertToLong(String key, Map<String, Object> param){
@@ -181,7 +181,7 @@ public class BasicHibernateDaoImpl implements IBasicHibernateDao {
 	}
 	
 	/**
-	 * paramÖĞµÄvalue×ªLongµÄ¹¤¾ß·½·¨
+	 * paramä¸­çš„valueè½¬Longçš„å·¥å…·æ–¹æ³•
 	 */
 	@Override
 	public Long convertToLong(String key, Map<String, Object> param, boolean override){

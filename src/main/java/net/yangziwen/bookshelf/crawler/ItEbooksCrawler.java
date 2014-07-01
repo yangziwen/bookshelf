@@ -62,7 +62,7 @@ public class ItEbooksCrawler {
 		int sleepTime = 0, sleepInterval = 200;
 		boolean connAvailable = true;
 		while(pipedIn.available() <= 0) {
-			// 有没有个可阻塞的方法，或者事件什么的
+			// 鏈夋病鏈変釜鍙樆濉炵殑鏂规硶锛屾垨鑰呬簨浠朵粈涔堢殑
 			Thread.currentThread().sleep(sleepInterval);
 			sleepTime += sleepInterval;
 			if(sleepTime >= 20000) {
