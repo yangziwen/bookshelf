@@ -8,21 +8,24 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<!-- bean id="dataSource"
-		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/bookshelfdb" />
-		<property name="username" value="root" />
-		<property name="password" value="mysqlpwd1" />
-	</bean> -->
-	
 	<bean id="dataSource"
 		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="org.sqlite.JDBC" />
-		<property name="url" value="jdbc:sqlite:#{systemProperties['webapp.root']}/WEB-INF/db/bookshelf.db" />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://r.rdc.sae.sina.com.cn:3307/app_zybookshelf" />
+		<property name="username" value="zymkn14oyn" />
+		<property name="password" value="h1wy2llix0zxw2yl3m12xk1zwi5yy4lm5yj0imki" />
+		<property name="initialSize" value="5"></property>
+		<property name="maxActive" value="30"></property>
+		<property name="maxIdle" value="10"></property>
+		<property name="minIdle" value="2"></property>
+		<property name="testOnBorrow" value="true"></property>
+		<property name="validationQuery" value="select 1"></property>
 	</bean>
+	
+	<!-- <bean id="dataSource"
+		class="org.sqlite.SQLiteDataSource">
+		<property name="url" value="jdbc:sqlite:#{systemProperties['webapp.root']}/WEB-INF/db/bookshelf.db" />
+	</bean> -->
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
