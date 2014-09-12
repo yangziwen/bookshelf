@@ -8,21 +8,34 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<!-- bean id="dataSource"
-		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/bookshelfdb" />
-		<property name="username" value="root" />
-		<property name="password" value="mysqlpwd1" />
-	</bean> -->
-	
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+
 	<bean id="dataSource"
+		class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+			<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+			<property name="url" value="${jdbc.mysql.url}"></property>
+			<property name="username" value="${jdbc.mysql.username}"></property>
+			<property name="password" value="${jdbc.mysql.password}"></property>
+			<property name="initialSize" value="${jdbc.initialSize}"></property>
+			<property name="maxActive" value="${jdbc.maxActive}"></property>
+			<property name="maxIdle" value="${jdbc.maxIdle}"></property>
+			<property name="minIdle" value="${jdbc.minIdle}"></property>
+			<property name="logAbandoned" value="true"></property>
+			<property name="removeAbandoned" value="true"></property>
+			<property name="removeAbandonedTimeout" value="150"></property>
+			<property name="maxWait" value="3000"></property>
+			<property name="testWhileIdle" value="true"></property>
+			<property name="timeBetweenEvictionRunsMillis" value="300000"></property>
+			<property name="minEvictableIdleTimeMillis" value="320000"></property>
+	</bean>
+	
+	<!-- <bean id="dataSource"
 		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.sqlite.JDBC" />
 		<property name="url" value="jdbc:sqlite:#{systemProperties['user.dir']}/db/bookshelf.db" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
-	</bean>
+	</bean> -->
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -31,12 +44,12 @@
 		</property>
 		<property name="hibernateProperties">
 			<props>
-				<!-- prop key="hibernate.dialect">
-					org.hibernate.dialect.MySQLDialect
-				</prop -->
 				<prop key="hibernate.dialect">
-					net.yangziwen.bookshelf.util.SQLiteDialect
+					org.hibernate.dialect.MySQLDialect
 				</prop>
+				<!-- <prop key="hibernate.dialect">
+					net.yangziwen.bookshelf.util.SQLiteDialect
+				</prop> -->
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">none</prop>
 				<prop key="hibernate.cache.provider_class">
