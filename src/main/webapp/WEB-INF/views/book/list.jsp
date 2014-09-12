@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>电子书列表</title>
+<link type="image/x-icon" rel="shortcut icon" href="${ctx_path}/img/favicon.ico" />
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
 <style>
 .detail-block {
