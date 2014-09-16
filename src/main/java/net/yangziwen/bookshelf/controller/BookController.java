@@ -1,11 +1,25 @@
 package net.yangziwen.bookshelf.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import net.yangziwen.bookshelf.crawler.ItEbooksCrawler;
+import net.yangziwen.bookshelf.pojo.Book;
 import net.yangziwen.bookshelf.service.IBookService;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,33 +66,39 @@ public class BookController {
 		return "book/list";
 	}
 	
-//	@ResponseBody
-//	@RequestMapping("/getBookDownloadLink.do")
-//	public String getBookDownloadLink(@RequestParam(value="pageUrl", required=true)String pageUrl) {
-//		try {
-//			HttpClient client = new DefaultHttpClient();
-//			HttpGet get = new HttpGet(pageUrl);
-//			HttpResponse response = client.execute(get);
-//			HttpEntity entity = response.getEntity();
-//			if(entity == null) {
-//				return "";
-//			}
-//			Parser parser = new HtmlParser();
-//			LinkContentHandler linkHandler = new LinkContentHandler();
-//			Metadata meta = new Metadata();
-//			meta.set(Metadata.CONTENT_TYPE, "text/html");
-//			parser.parse(entity.getContent(), linkHandler, meta, new ParseContext());
-//			String url = "";
-//			for(Link link: linkHandler.getLinks()) {
-//				if("Free".equals(link.getText())) {
-//					url = "http://it-ebooks.info/" + link.getUri();
-//				}
-//			}
-//			return url;
-//		} catch (Exception e) {
-//			return "";
-//		}
-//	}
+	/**
+	 * 下载电子书
+	 */
+	@RequestMapping("/download.do")
+	public void downloadBook(@RequestParam String pageUrl, HttpServletResponse response) throws ClientProtocolException, IOException {
+		HttpClient client = new DefaultHttpClient(ItEbooksCrawler.cm);
+		HttpGet pageRequest = new HttpGet(pageUrl);
+		Book book = client.execute(pageRequest, new ItEbooksCrawler.ItEbookResponseHandler(pageUrl));
+		
+		if(StringUtils.isBlank(book.getDownloadUrl())) {
+			return;
+		}
+		
+		HttpGet downloadBookRequest = new HttpGet(book.getDownloadUrl());
+		downloadBookRequest.addHeader("Referer", pageUrl);
+		HttpResponse downloadBookResponse = client.execute(downloadBookRequest);
+		
+		response.setContentLength(Long.valueOf(downloadBookResponse.getEntity().getContentLength()).intValue());
+		response.setContentType(downloadBookResponse.getFirstHeader("Content-Type").getValue());
+		response.setHeader("Content-Disposition", downloadBookResponse.getFirstHeader("Content-Disposition").getValue());
+		response.flushBuffer();
+		
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			in = downloadBookResponse.getEntity().getContent();
+			out = response.getOutputStream();
+			IOUtils.copy(in, out);
+		} finally {
+			IOUtils.closeQuietly(in);
+			IOUtils.closeQuietly(out);
+		}
+	}
 	
 	/**
 	 * 添加一个生成更新数据的sql的接口
