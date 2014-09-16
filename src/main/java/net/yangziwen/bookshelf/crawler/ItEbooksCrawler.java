@@ -29,39 +29,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class ItEbooksCrawler {
 	
-	private static ClientConnectionManager cm = buildClientConnectionManager();
+	public static ClientConnectionManager cm = buildClientConnectionManager();
 	
 	public Book crawlPage(final String pageUrl) throws Exception {
 		if(StringUtils.isBlank(pageUrl)) {
 			return null;
 		}
 		HttpClient client = new DefaultHttpClient(ItEbooksCrawler.cm);
-		return client.execute(new HttpGet(pageUrl), new ResponseHandler<Book>() {
-			@Override
-			public Book handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
-				if(response.getStatusLine().getStatusCode() >= 400) {
-					return null;
-				}
-				String pageContent = EntityUtils.toString(response.getEntity(), "UTF-8");
-				Document doc = Jsoup.parse(pageContent);
-				Element viewTbl = doc.select("table.ebook_view").first();
-				Element coverImg = viewTbl.select("img").first();
-				Element detailTbl = viewTbl.select("table").first();
-				Map<String, String> params = new HashMap<String, String>();
-				for(Element tr: detailTbl.select("tr")) {
-					Elements tds = tr.children();
-					if(tds.size() < 2) {
-						continue;
-					}
-					String key = tds.get(0).text().replace(":", "");
-					String value = "By".equals(key)? tds.get(1).select("a").first().text() :tds.get(1).text();
-					params.put(key, value);
-				}
-				params.put("Cover", coverImg.attr("src"));
-				params.put("PageUrl", pageUrl);
-				return createNewBook(params);
-			}
-		});
+		return client.execute(new HttpGet(pageUrl), new ItEbookResponseHandler(pageUrl));
 	}
 	
 	private static Book createNewBook(Map<String, String> params) {
@@ -78,6 +53,10 @@ public class ItEbooksCrawler {
 		book.setPages(NumberUtils.toInt(params.get("Pages")));
 		book.setCoverImgUrl(params.get("Cover"));
 		book.setPageUrl(params.get("PageUrl"));
+		book.setDownloadUrl(params.get("Download"));
+		if(StringUtils.isBlank(book.getDownloadUrl())) {
+			book.setDownloadUrl(params.get("Free"));
+		}
 		if(book.getAuthorName() != null && book.getAuthorName().length() > 300) {
 			book.setAuthorName(book.getAuthorName().substring(0, 300));
 		}
@@ -91,6 +70,46 @@ public class ItEbooksCrawler {
 		cm.setMaxTotal(50);
 		cm.setDefaultMaxPerRoute(20);
 		return cm;
+	}
+	
+	public static class ItEbookResponseHandler implements ResponseHandler<Book> {
+		
+		private String pageUrl;
+		
+		public ItEbookResponseHandler(String pageUrl) {
+			this.pageUrl = pageUrl;
+		}
+
+		@Override
+		public Book handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+			if(response.getStatusLine().getStatusCode() >= 400) {
+				return null;
+			}
+			String pageContent = EntityUtils.toString(response.getEntity(), "UTF-8");
+			Document doc = Jsoup.parse(pageContent);
+			Element viewTbl = doc.select("table.ebook_view").first();
+			Element coverImg = viewTbl.select("img").first();
+			Element detailTbl = viewTbl.select("table").first();
+			Map<String, String> params = new HashMap<String, String>();
+			for(Element tr: detailTbl.select("tr")) {
+				Elements tds = tr.children();
+				if(tds.size() < 2) {
+					continue;
+				}
+				String key = tds.get(0).text().replace(":", "");
+				String value = tds.get(1).text();
+				if("By".equals(key)) {
+					value = tds.get(1).select("a").first().text();
+				} else if ("Download".equals(key) || "Free".equals(key)) {
+					value  = tds.get(1).select("a").attr("href");
+				}
+				params.put(key, value);
+			}
+			params.put("Cover", coverImg.attr("src"));
+			params.put("PageUrl", this.pageUrl);
+			return createNewBook(params);
+		}
+		
 	}
 	
 }

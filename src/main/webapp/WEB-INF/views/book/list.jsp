@@ -33,6 +33,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrapPageBar.js"></script>
 <script>
+var CTX_PATH = '${pageContext.request.contextPath}';
 $(function(){
 	initQueryForm();
 	initPageBar();
@@ -82,13 +83,7 @@ function downloadBook(pageUrl) {
 		alert('参数有误!');
 		return;
 	}
-	$.post('./getBookDownloadLink.do',{pageUrl: pageUrl}, function(downloadUrl){
-		if(!downloadUrl) {
-			alert('下载链接获取失败!');
-			return;
-		}
-		window.open(downloadUrl, 'bookDownloadFrame');
-	});
+	window.open(CTX_PATH + '/book/download.do?pageUrl=' + encodeURIComponent(pageUrl), 'bookDownloadFrame');
 }
 
 </script>
@@ -215,8 +210,8 @@ function downloadBook(pageUrl) {
 							</div>
 							<div class="detail-block">
 								<h4>
-									<%-- <a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a> --%>
-									<a href="${book.pageUrl}" target="_blank">下载页</a>
+									<%-- <a href="${book.pageUrl}" target="_blank">链&nbsp;&nbsp;&nbsp;&nbsp;接</a> --%>
+									<a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a>
 								</h4>
 							</div>
 						</td>
