@@ -17,4 +17,8 @@ public interface IBookDao {
 
 	void saveOrUpdateBook(Book book);
 
+	List<String> getPublisherListResult();
+
+	List<String> getYearListResult();
+
 }

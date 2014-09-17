@@ -33,6 +33,29 @@ public class BookDaoImpl implements IBookDao {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
+	public List<String> getPublisherListResult() {
+		StringBuilder sqlBuff = new StringBuilder()
+			.append(" select distinct publisher ")
+			.append(" from book ")
+			.append(" group by publisher ")
+			.append(" order by count(*) desc")
+		;
+		return basicHibernateDao.getCurrentSession().createSQLQuery(sqlBuff.toString()).list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getYearListResult() {
+		StringBuilder sqlBuff = new StringBuilder()
+			.append(" select distinct year ")
+			.append(" from book ")
+			.append(" order by year desc ")
+		;
+		return basicHibernateDao.getCurrentSession().createSQLQuery(sqlBuff.toString()).list();
+	}
+	
+	@Override
 	public List<Book> getBookListResult(int start, int limit, Map<String, Object> param) {
 		return basicHibernateDao.<Book>getListResult(start, limit, generateHqlByParam(param), param);
 	}

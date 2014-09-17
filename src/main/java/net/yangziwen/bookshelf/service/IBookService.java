@@ -17,4 +17,8 @@ public interface IBookService {
 
 	Book getBookByBookId(Long bookId);
 
+	List<String> getPublisherListResult();
+
+	List<String> getYearListResult();
+
 }

@@ -40,21 +40,36 @@ $(function(){
 });
 
 function initQueryForm(){
-	$('#J_year').val('${year}');
-	$('#J_publisher').val("${publisher}");
+	$('#J_year').val('${param.year}');
+	$('#J_publisher').val("${param.publisher}");
 	$('#J_clearQueryBtn').click(function(){
 		$('#J_publisher').val('');
 		$('#J_name').val('');
 		$('#J_authorName').val('');
 		$('#J_year').val('');
 		$('#J_start').val('0');
-		$('#J_queryForm').submit();
+		//$('#J_queryForm').submit();
+		queryBooks();
+	});
+	$('#J_queryForm').on('keyup', function(ev){
+		if(ev.which == 13) {
+			queryBooks();
+		}
 	});
 }
 
+function queryBooks() {
+	var params = [];
+	$.each(['name', 'authorName', 'publisher', 'year', 'start'], function(i, key) {
+		var value = $('#J_' + key).val();
+		value && (params.push(key + '=' + encodeURIComponent(value)));
+	});
+	location.href = CTX_PATH + '/book/list.do?' + params.join('&');
+}
+
 function initPageBar(){
-	var start = parseInt('${start}');
-	var limit = parseInt('${limit}');
+	var start = parseInt('${param.start}');
+	var limit = parseInt('${param.limit}');
 	var totalCount = parseInt('${totalCount}');
 	isNaN(start) && (start = 0);
 	isNaN(limit) && (limit = 20);
@@ -69,10 +84,11 @@ function initPageBar(){
 		siblingBtnNum: 2,
 		paginationCls: 'pagination-right',
 		click: function(i, pageNum){
-			var recordForm = $('#J_queryForm');
+			//var recordForm = $('#J_queryForm');
 			var start = (pageNum - 1) * limit;
 			$('#J_start').val(start);
-			recordForm.submit();
+			//recordForm.submit();
+			queryBooks();
 			return false;
 		}
 	});
@@ -104,13 +120,13 @@ function downloadBook(bookId) {
 						<label><strong>书名:&nbsp;&nbsp;</strong></label>
 					</td>
 					<td style="width: 25%;">
-						<input id="J_name" name="name" type="text" class="input-medium" value="${name}"/>
+						<input id="J_name" name="name" type="text" class="input-medium" value="${param.name}"/>
 					</td>
 					<td style="text-align: right">
 						<label><strong>作者:&nbsp;&nbsp;</strong></label>
 					</td>
 					<td style="width: 35%">
-						<input id="J_authorName" name="authorName" type="text" class="input-medium" value="${authorName }"/>
+						<input id="J_authorName" name="authorName" type="text" class="input-medium" value="${param.authorName }"/>
 					</td>
 				</tr>
 				<tr>
@@ -120,21 +136,9 @@ function downloadBook(bookId) {
 					<td>
 						<select id="J_publisher" name="publisher" class="input-medium" style="width: 165px;">
 							<option value="">请选择...</option>
-							<option>O'Reilly Media</option>
-							<option>Manning</option>
-							<option>Apress</option>
-							<option>Wrox</option>
-							<option>Wiley</option>
-							<option>Packt Publishing</option>
-							<option>The Pragmatic Programmers</option>
-							<option>Cisco Press</option>
-							<option>SAMS Publishing</option>
-							<option>McGraw-Hill</option>
-							<option>Addison-Wesley</option>
-							<option>SitePoint</option>
-							<option>Prentice Hall</option>
-							<option>No Starch Press</option>
-							<option>MicrosoftPress</option>
+							<c:forEach items="${publisherList}" var="publisher">
+								<option>${publisher}</option>
+							</c:forEach>
 						</select>
 					</td>
 					<td style="text-align: right;">
@@ -143,17 +147,17 @@ function downloadBook(bookId) {
 					<td>
 						<select id="J_year" name="year" class="input-medium" style="width: 165px;">
 							<option value="">请选择...</option>
-							<c:forEach begin="0" end="19"  var="year">
-								<option>${2013-year}</option>
+							<c:forEach items="${yearList}" var="year">
+								<option>${year}</option>
 							</c:forEach>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="4" style="text-align: center;">
-							<button id="J_queryBtn" type="submit" class="btn btn-primary" style="width: 82px;">&nbsp;查&nbsp;&nbsp;询&nbsp;</button>
-								&nbsp;&nbsp;&nbsp;&nbsp;
-								<button id="J_clearQueryBtn" type="button" class="btn">清除条件</button>
+							<button id="J_queryBtn" type="button" onclick="queryBooks();" class="btn btn-primary" style="width: 82px;">&nbsp;查&nbsp;&nbsp;询&nbsp;</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<button id="J_clearQueryBtn" type="button" class="btn">清除条件</button>
 					</td>
 				</tr>
 			</table>
