@@ -31,16 +31,18 @@ public class ItEbooksCrawler {
 	
 	public static ClientConnectionManager cm = buildClientConnectionManager();
 	
-	public Book crawlPage(final String pageUrl) throws Exception {
+	public Book crawlPage(final Long bookId) throws Exception {
+		final String pageUrl = "http://it-ebooks.info/book/" + bookId;
 		if(StringUtils.isBlank(pageUrl)) {
 			return null;
 		}
 		HttpClient client = new DefaultHttpClient(ItEbooksCrawler.cm);
-		return client.execute(new HttpGet(pageUrl), new ItEbookResponseHandler(pageUrl));
+		return client.execute(new HttpGet(pageUrl), new ItEbookResponseHandler(bookId, pageUrl));
 	}
 	
 	private static Book createNewBook(Map<String, String> params) {
 		Book book = new Book();
+		book.setBookId(NumberUtils.toLong(params.get("BookId")));
 		book.setName(params.get("Buy"));
 		book.setAuthorName(params.get("By"));
 		book.setPublisher(params.get("Publisher"));
@@ -74,9 +76,11 @@ public class ItEbooksCrawler {
 	
 	public static class ItEbookResponseHandler implements ResponseHandler<Book> {
 		
+		private Long bookId;
 		private String pageUrl;
 		
-		public ItEbookResponseHandler(String pageUrl) {
+		public ItEbookResponseHandler(Long bookId, String pageUrl) {
+			this.bookId = bookId;
 			this.pageUrl = pageUrl;
 		}
 
@@ -99,13 +103,14 @@ public class ItEbooksCrawler {
 				String key = tds.get(0).text().replace(":", "");
 				String value = tds.get(1).text();
 				if("By".equals(key)) {
-					value = tds.get(1).select("a").first().text();
+					value = tds.get(1).select("b").first().text();
 				} else if ("Download".equals(key) || "Free".equals(key)) {
 					value  = tds.get(1).select("a").attr("href");
 				}
 				params.put(key, value);
 			}
 			params.put("Cover", coverImg.attr("src"));
+			params.put("BookId", String.valueOf(this.bookId));
 			params.put("PageUrl", this.pageUrl);
 			return createNewBook(params);
 		}

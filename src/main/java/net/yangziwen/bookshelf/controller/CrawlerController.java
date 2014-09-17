@@ -20,7 +20,7 @@ public class CrawlerController {
 	
 	private Logger logger = Logger.getLogger(getClass());
 
-	private static final int DEFAULT_MAX_FAILED_TIMES = 10;
+	private static final int DEFAULT_MAX_FAILED_TIMES = 5;
 	
 	@Autowired
 	private IBookService bookService;
@@ -88,21 +88,19 @@ public class CrawlerController {
 			maxFailedTimes = 1;
 		}
 		final String pageUrl = "http://it-ebooks.info/book/" + n;
+		final Long bookId = Long.valueOf(n);
 		final ItEbooksCrawler crawler = new ItEbooksCrawler();
 		final Book[] bookReceiver = new Book[maxFailedTimes];
 		Book book = null;
 		int failedTimes = 0;
 		while(bookReceiver[failedTimes] == null) {
-			if(failedTimes >= maxFailedTimes) {
-				break;
-			}
 			final int currentFailedTimes = failedTimes;
 			try {
 				Thread crawlerThread = new Thread(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							bookReceiver[currentFailedTimes] = crawler.crawlPage(pageUrl);
+							bookReceiver[currentFailedTimes] = crawler.crawlPage(bookId);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -119,6 +117,9 @@ public class CrawlerController {
 			} catch (Exception e) {
 				logger.error("Thread: [" + Thread.currentThread().getName() +  "] failed " + (++failedTimes) + " times to crawl book [" + pageUrl + "]");
 				logger.error(e.getMessage());
+			}
+			if(failedTimes >= maxFailedTimes) {
+				break;
 			}
 		}
 		return book;

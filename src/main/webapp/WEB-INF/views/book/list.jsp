@@ -77,12 +77,12 @@ function initPageBar(){
 	});
 }
 
-function downloadBook(pageUrl) {
-	if(!pageUrl) {
+function downloadBook(bookId) {
+	if(!bookId) {
 		alert('参数有误!');
 		return;
 	}
-	window.open(CTX_PATH + '/book/download.do?pageUrl=' + encodeURIComponent(pageUrl), 'bookDownloadFrame');
+	window.open(CTX_PATH + '/book/download.do?bookId=' + bookId, 'bookDownloadFrame');
 }
 
 </script>
@@ -210,7 +210,7 @@ function downloadBook(pageUrl) {
 							<div class="detail-block">
 								<h4>
 									<%-- <a href="${book.pageUrl}" target="_blank">链&nbsp;&nbsp;&nbsp;&nbsp;接</a> --%>
-									<a href="javascript:downloadBook('${book.pageUrl}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a>
+									<a href="javascript:downloadBook('${book.bookId}')">下&nbsp;&nbsp;&nbsp;&nbsp;载</a>
 								</h4>
 							</div>
 						</td>
