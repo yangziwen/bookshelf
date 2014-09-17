@@ -70,17 +70,16 @@ public class BookController {
 	 * 下载电子书
 	 */
 	@RequestMapping("/download.do")
-	public void downloadBook(@RequestParam String pageUrl, HttpServletResponse response) throws ClientProtocolException, IOException {
+	public void downloadBook(@RequestParam Long bookId, HttpServletResponse response) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient(ItEbooksCrawler.cm);
-		HttpGet pageRequest = new HttpGet(pageUrl);
-		Book book = client.execute(pageRequest, new ItEbooksCrawler.ItEbookResponseHandler(pageUrl));
+		Book book = bookService.getBookByBookId(bookId);
 		
 		if(StringUtils.isBlank(book.getDownloadUrl())) {
 			return;
 		}
 		
 		HttpGet downloadBookRequest = new HttpGet(book.getDownloadUrl());
-		downloadBookRequest.addHeader("Referer", pageUrl);
+		downloadBookRequest.addHeader("Referer", book.getPageUrl());
 		HttpResponse downloadBookResponse = client.execute(downloadBookRequest);
 		
 		response.setContentLength(Long.valueOf(downloadBookResponse.getEntity().getContentLength()).intValue());

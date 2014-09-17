@@ -13,4 +13,8 @@ public interface IBookService {
 
 	List<String> generateInsertSqlForBookList(int start, int limit, Map<String, Object> param);
 
+	Book getBookById(Long id);
+
+	Book getBookByBookId(Long bookId);
+
 }

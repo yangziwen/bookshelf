@@ -44,6 +44,10 @@ public class BookDaoImpl implements IBookDao {
 	
 	private String generateHqlByParam(Map<String, Object> param) {
 		StringBuilder hqlBuff = new StringBuilder("from Book where name is not null ");
+		Long bookId = (Long) param.get("bookId");
+		if(bookId != null) {
+			hqlBuff.append(" and bookId = :bookId ");
+		}
 		String publisher = (String) param.get("publisher");
 		if(!StringUtils.isEmpty(publisher)) {
 			hqlBuff.append(" and publisher = :publisher ");

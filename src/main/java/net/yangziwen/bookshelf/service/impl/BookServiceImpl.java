@@ -2,6 +2,7 @@ package net.yangziwen.bookshelf.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import net.yangziwen.bookshelf.service.IBookService;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class BookServiceImpl implements IBookService {
@@ -22,6 +24,19 @@ public class BookServiceImpl implements IBookService {
 	@Override
 	public void saveOrUpdateBook(Book book) {
 		bookDao.saveOrUpdateBook(book);
+	}
+	
+	@Override
+	public Book getBookById(Long id) {
+		return bookDao.getBookById(id);
+	}
+	
+	@Override
+	public Book getBookByBookId(Long bookId) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("bookId", bookId);
+		List<Book> list = bookDao.getBookListResult(0, 1, param);
+		return CollectionUtils.isEmpty(list)? null: list.get(0);
 	}
 	
 	@Override
