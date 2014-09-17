@@ -166,7 +166,7 @@ function downloadBook(bookId) {
 	<hr/>
 	<div style="width:800px; margin: 10px auto 20px;">
 		<div>
-			<div id="J_pageBarTop" style="margin-top: 5px;"></div>
+			<div id="J_pageBarTop" style="margin-top: 5px; height: 30px;" class="pagination"></div>
 		</div>
 		<table class="table table-bordered table-condensed table-hover" style="width: 100%;">
 			<tbody>
