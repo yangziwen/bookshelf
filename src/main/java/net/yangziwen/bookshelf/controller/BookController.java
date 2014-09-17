@@ -58,10 +58,10 @@ public class BookController {
 		param.put("name", name);
 		param.put("year", year);
 		param.put("orderBy", " id desc ");
-		model.addAllAttributes(param);
-		model.addAttribute("start", start);
-		model.addAttribute("limit", limit);
 		model.addAllAttributes(bookService.getBookPaginateResult(start, limit, param));
+		
+		model.addAttribute("publisherList", bookService.getPublisherListResult());
+		model.addAttribute("yearList", bookService.getYearListResult());
 		model.addAttribute("success", Boolean.TRUE);
 		return "book/list";
 	}

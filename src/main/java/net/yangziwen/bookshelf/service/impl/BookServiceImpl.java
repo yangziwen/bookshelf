@@ -40,6 +40,16 @@ public class BookServiceImpl implements IBookService {
 	}
 	
 	@Override
+	public List<String> getPublisherListResult() {
+		return bookDao.getPublisherListResult();
+	}
+	
+	@Override
+	public List<String> getYearListResult() {
+		return bookDao.getYearListResult();
+	}
+	
+	@Override
 	public Map<String, Object> getBookPaginateResult(int start, int limit, Map<String, Object> param) {
 		return bookDao.getBookPaginateResult(start, limit, param);
 	}
