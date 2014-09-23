@@ -15,7 +15,7 @@
 	<context:property-placeholder location="classpath:jdbc-jd.properties"/>
 
 	<bean id="dataSource"
-		class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+		class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
 			<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
 			<property name="url" value="${jdbc.mysql.url}"></property>
 			<property name="username" value="${jdbc.mysql.username}"></property>
@@ -31,6 +31,7 @@
 			<property name="testWhileIdle" value="true"></property>
 			<property name="timeBetweenEvictionRunsMillis" value="300000"></property>
 			<property name="minEvictableIdleTimeMillis" value="320000"></property>
+			<property name="filters" value="mergeStat"></property>
 	</bean>
 	
 	<!-- <bean id="dataSource"
