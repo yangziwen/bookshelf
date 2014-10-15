@@ -45,10 +45,14 @@
 	
 	<filter>
 		<filter-name>DruidWebStatFilter</filter-name>
-		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+		<filter-class>net.yangziwen.bookshelf.filter.ExclusionCustomizedWebStatFilter</filter-class>
 		<init-param>
-			<param-name>exclusions</param-name>
+			<param-name>requestURIExclusions</param-name>
 			<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+		</init-param>
+		<init-param>
+			<param-name>userAgentExclusions</param-name>
+			<param-value>Spider,Robot</param-value>
 		</init-param>
 		<init-param>
 			<param-name>profileEnable</param-name>
