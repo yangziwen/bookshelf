@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -136,7 +137,9 @@ function downloadBook(bookId) {
 						<select id="J_publisher" name="publisher" class="input-medium" style="width: 165px;">
 							<option value="">请选择...</option>
 							<c:forEach items="${publisherList}" var="publisher">
-								<option>${publisher}</option>
+								<c:if test="${fn:trim(publisher) != ''}">
+									<option>${publisher}</option>
+								</c:if>
 							</c:forEach>
 						</select>
 					</td>
@@ -147,7 +150,9 @@ function downloadBook(bookId) {
 						<select id="J_year" name="year" class="input-medium" style="width: 165px;">
 							<option value="">请选择...</option>
 							<c:forEach items="${yearList}" var="year">
-								<option>${year}</option>
+								<c:if test="${fn:trim(year) != ''}">
+									<option>${year}</option>
+								</c:if>
 							</c:forEach>
 						</select>
 					</td>

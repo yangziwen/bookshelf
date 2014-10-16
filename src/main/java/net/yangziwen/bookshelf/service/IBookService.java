@@ -21,4 +21,6 @@ public interface IBookService {
 
 	List<String> getYearListResult();
 
+	void crawlItEbooks(int from, int to, int threadNum);
+
 }

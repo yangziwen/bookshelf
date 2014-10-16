@@ -19,7 +19,7 @@
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
 
-	<servlet>
+	<!-- <servlet>
 		<servlet-name>dispatcher</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
@@ -32,10 +32,10 @@
 	<servlet-mapping>
 		<servlet-name>dispatcher</servlet-name>
 		<url-pattern>*.do</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping> -->
 
 	<!-- 设置request的编码格式 -->
-	<filter>
+	<!-- <filter>
 		<filter-name>Character Encoding</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
 		<init-param>
@@ -50,7 +50,7 @@
 	<filter-mapping>
 		<filter-name>Character Encoding</filter-name>
 		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
+	</filter-mapping> -->
 
 	<!-- 将hibernate的session绑定到request的线程上 -->
 	<filter>
@@ -60,6 +60,15 @@
 
 	<filter-mapping>
 		<filter-name>openSessionInViewFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
 		<url-pattern>*.do</url-pattern>
 	</filter-mapping>
 

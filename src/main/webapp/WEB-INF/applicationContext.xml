@@ -8,21 +8,21 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<!-- bean id="dataSource"
+	<bean id="dataSource"
 		class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/bookshelfdb" />
+		<property name="url" value="jdbc:mysql://localhost:3306/bookshelf" />
 		<property name="username" value="root" />
-		<property name="password" value="mysqlpwd1" />
-	</bean> -->
+		<property name="password" value="" />
+	</bean>
 	
-	<bean id="dataSource"
+	<!-- <bean id="dataSource"
 		class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
 		<property name="driverClassName" value="org.sqlite.JDBC" />
 		<property name="url" value="jdbc:sqlite:#{systemProperties['user.dir']}/db/bookshelf.db" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
-	</bean>
+	</bean> -->
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
