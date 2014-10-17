@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-@ParentPackage("struts-default") 
+@ParentPackage("default") 
 @Namespace("/crawler")
 @SuppressWarnings("serial")
 public class CrawlerAction extends ActionSupport implements ServletResponseAware {

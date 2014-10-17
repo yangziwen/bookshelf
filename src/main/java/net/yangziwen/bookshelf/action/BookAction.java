@@ -1,9 +1,8 @@
 package net.yangziwen.bookshelf.action;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import net.yangziwen.bookshelf.crawler.ItEbooksCrawler;
 import net.yangziwen.bookshelf.pojo.Book;
 import net.yangziwen.bookshelf.service.IBookService;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,23 +24,19 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 @ParentPackage("struts-default") 
 @Namespace("/book")
-@Results({
-	@Result(name="list", location="book/list.jsp")
-})
 @SuppressWarnings("serial")
 public class BookAction extends ActionSupport {
 	
 	@Autowired
 	private IBookService bookService;
 	
-	@Action("/list")
+	@Action(value = "/list", results = {@Result(name="list", location="book/list.jsp")})
 	public String list() {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("publisher", publisher);
@@ -56,16 +50,21 @@ public class BookAction extends ActionSupport {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		request.setAttribute("list", pageInfo.get("list"));
 		request.setAttribute("totalCount", pageInfo.get("totalCount"));
-		
-		
 		request.setAttribute("publisherList", bookService.getPublisherListResult());
 		request.setAttribute("yearList", bookService.getYearListResult());
 		request.setAttribute("success", Boolean.TRUE);
 		return "list";
 	}
 	
-	@Action("/download")
-	public void downloadBook() throws Exception {
+	@Action(value = "/download", results = {
+		@Result(name="download", type="stream", params = {
+			"inputName", "inputStream",
+			"contentType", "${contentType}",
+			"contentLength", "${contentLength}",
+			"contentDisposition", "${contentDisposition}"
+		})
+	})
+	public String downloadBook() throws Exception {
 		HttpServletResponse response = ServletActionContext.getResponse();
 		
 		HttpClient client = new DefaultHttpClient(ItEbooksCrawler.cm);
@@ -73,33 +72,29 @@ public class BookAction extends ActionSupport {
 		
 		if(book == null || StringUtils.isBlank(book.getDownloadUrl())) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return NONE;
 		}
 		
 		HttpGet downloadBookRequest = new HttpGet(book.getDownloadUrl());
 		downloadBookRequest.addHeader("Referer", book.getPageUrl());
 		HttpResponse downloadBookResponse = client.execute(downloadBookRequest);
 		
-		response.setContentLength(Long.valueOf(downloadBookResponse.getEntity().getContentLength()).intValue());
-		response.setContentType(downloadBookResponse.getFirstHeader("Content-Type").getValue());
-		response.setHeader("Content-Disposition", downloadBookResponse.getFirstHeader("Content-Disposition").getValue());
-		response.flushBuffer();
-		
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = downloadBookResponse.getEntity().getContent();
-			out = response.getOutputStream();
-			IOUtils.copy(in, out);
-		} finally {
-			IOUtils.closeQuietly(in);
-			IOUtils.closeQuietly(out);
+		if(downloadBookResponse.getStatusLine().getStatusCode() >= 400 || downloadBookResponse.getEntity() == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return NONE;
 		}
+		
+		contentType = downloadBookResponse.getFirstHeader("Content-Type").getValue();
+		contentLength = downloadBookResponse.getEntity().getContentLength();
+		contentDisposition = downloadBookResponse.getFirstHeader("Content-Disposition").getValue();
+		inputStream = downloadBookResponse.getEntity().getContent();
+		return "download";
 	}
 	
-	@Action("/sql")
-	public void getBookUpdateSql() throws IOException {
-		HttpServletResponse response = ServletActionContext.getResponse();
+	@Action(value = "/sql", results = {
+		@Result(name="sql", type="stream", params = {"contentType", "text/html"})
+	})
+	public String getBookUpdateSql() throws IOException {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("minId", Long.valueOf(from));
 		List<String> sqlList = bookService.generateInsertSqlForBookList(start, limit, param);
@@ -109,9 +104,8 @@ public class BookAction extends ActionSupport {
 			htmlBuff.append("<span>").append(sql).append("</span><br/>");
 		}
 		htmlBuff.append("</body></html>");
-		PrintWriter writer = response.getWriter();
-		writer.print(htmlBuff.toString());
-		writer.flush();
+		inputStream = new ByteArrayInputStream(htmlBuff.toString().getBytes());
+		return "sql";
 	}
 	
 	//------- parameters from request ---------//
@@ -124,6 +118,10 @@ public class BookAction extends ActionSupport {
 	private String year = "";
 	private long from = 0L;
 	private long bookId = 0L;
+	private InputStream inputStream;
+	private long contentLength;
+	private String contentType;
+	private String contentDisposition;
 
 	public int getStart() {
 		return start;
@@ -172,6 +170,22 @@ public class BookAction extends ActionSupport {
 	}
 	public void setBookId(long bookId) {
 		this.bookId = bookId;
+	}
+
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	public long getContentLength() {
+		return contentLength;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public String getContentDisposition() {
+		return contentDisposition;
 	}
 	
 }
