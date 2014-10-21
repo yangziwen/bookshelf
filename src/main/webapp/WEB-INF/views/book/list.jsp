@@ -102,6 +102,32 @@ function downloadBook(bookId) {
 	window.open(CTX_PATH + '/book/download.do?bookId=' + bookId, 'bookDownloadFrame');
 }
 
+function openEditCronJobWin() {
+	openWin({
+		width: 450, 
+		height: 290,
+		url: CTX_PATH + '/crawler/editJob.do'
+	});
+}
+
+function openWin(options) {
+	options = options || {};
+	var width = options.width || 420,
+		height = options.height || 300;
+	var screenWidth = window.screen.availWidth,
+		screenHeight = window.screen.availHeight,
+		left = (screenWidth - width) / 2,
+		top = (screenHeight - height) / 2;
+	var winConfig = [
+		'width=' + width,
+		'height=' + height,
+		'left=' + left,
+		'top=' + top
+	].join(',');
+	var url = options.url;
+	window.open(url, '_blank', winConfig);
+}
+
 </script>
 </head>
 <body>

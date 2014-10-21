@@ -1,16 +1,25 @@
 package net.yangziwen.bookshelf.controller;
 
+import java.sql.Timestamp;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.yangziwen.bookshelf.crawler.ItEbooksCrawler;
 import net.yangziwen.bookshelf.pojo.Book;
+import net.yangziwen.bookshelf.pojo.CronJob;
 import net.yangziwen.bookshelf.service.IBookService;
+import net.yangziwen.bookshelf.service.ICronJobService;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -24,6 +33,40 @@ public class CrawlerController {
 	
 	@Autowired
 	private IBookService bookService;
+	@Autowired
+	private ICronJobService cronJobService;
+	
+	@RequestMapping(value = "/editJob.do", method = RequestMethod.GET)
+	public String editJob(Model model) {
+		model.addAttribute("cronJob", cronJobService.getCronJobByType(CronJob.TYPE_ITEBOOKS));
+		return "cronJob/edit";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/editJob.do", method = RequestMethod.POST)
+	public Map<String, Object> editJob(@ModelAttribute("cronJob") CronJob crontJob) {
+		ModelMap resultMap = new ModelMap();
+		if(!validateCron(crontJob.getCron())) {
+			resultMap.addAttribute("success", false).addAttribute("message", "请输入有效的cron表达式!");
+			return resultMap;
+		}
+		crontJob.setType(CronJob.TYPE_ITEBOOKS);
+		crontJob.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+		cronJobService.saveOrUpdateCronJob(crontJob);
+		return resultMap.addAttribute("success", true).addAttribute("message", "保存成功!");
+	}
+	
+	private boolean validateCron(String cronExpression) {
+		if(StringUtils.isBlank(cronExpression)) {
+			return false;
+		}
+		try {
+			new CronTrigger(cronExpression);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	@ResponseBody
 	@RequestMapping("/crawlItEbooks.do")
@@ -124,4 +167,6 @@ public class CrawlerController {
 		}
 		return book;
 	}
+	
+	
 }

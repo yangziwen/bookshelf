@@ -10,7 +10,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<springframework.version>3.1.1.RELEASE</springframework.version>
+		<springframework.version>3.2.10.RELEASE</springframework.version>
+		<jackson.version>2.1.5</jackson.version>
 		<antbuild.target>classpath</antbuild.target>
 	</properties>
 
@@ -79,6 +80,12 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.0</version>
+		</dependency>
 
 		<!-- jstl -->
 		<dependency>
@@ -131,6 +138,23 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.4.2</version>
+		</dependency>
+		
+		<!-- jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
 
 		<!-- 上传相关 -->
@@ -198,6 +222,9 @@
 					<port>8080</port>
 					<charset>UTF-8</charset>
 					<uriEncoding>UTF-8</uriEncoding>
+					<systemProperties>
+						<placeholder.jdbc>jdbc.properties</placeholder.jdbc>
+					</systemProperties>
 				</configuration>
 			</plugin>
 			<plugin>
