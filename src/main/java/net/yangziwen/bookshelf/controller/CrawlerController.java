@@ -44,7 +44,7 @@ public class CrawlerController {
 	
 	@ResponseBody
 	@RequestMapping(value="/editJob.do", method = RequestMethod.POST)
-	public Map<String, Object> editJob(@ModelAttribute("cronJob") CronJob crontJob) {
+	public Map<String, Object> editJob(CronJob crontJob) {
 		ModelMap resultMap = new ModelMap();
 		if(!validateCron(crontJob.getCron())) {
 			resultMap.addAttribute("success", false).addAttribute("message", "请输入有效的cron表达式!");

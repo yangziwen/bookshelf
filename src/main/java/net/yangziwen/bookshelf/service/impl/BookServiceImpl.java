@@ -6,17 +6,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.yangziwen.bookshelf.crawler.ItEbooksCrawler;
 import net.yangziwen.bookshelf.dao.IBookDao;
 import net.yangziwen.bookshelf.pojo.Book;
 import net.yangziwen.bookshelf.service.IBookService;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 @Service
 public class BookServiceImpl implements IBookService {
+	
+	private Logger logger = Logger.getLogger(this.getClass());
 	
 	@Autowired
 	private IBookDao bookDao;
@@ -93,6 +97,58 @@ public class BookServiceImpl implements IBookService {
 			return "null";
 		}
 		return "'" + StringEscapeUtils.escapeSql(value) + "'";
+	}
+	
+	@Override	// 理论上这种耗时的操作不应该放在事务里，不过反正只是随便写写，无所谓了
+	public void crawlNewBooks(int limit) {
+		if(limit <= 0) {
+			return;
+		}
+		Book latestBook = getLatestBook();
+		Long latestBookId = latestBook != null? latestBook.getBookId(): 0L;
+		if(!hasNewBookToCrawl(latestBookId, 3, 2)) {
+			logger.info("There is no new book!");
+			return;
+		}
+		Long newBookId = latestBookId + 1;
+		ItEbooksCrawler crawler = new ItEbooksCrawler();
+		for(int i=0; i<limit; i++) {
+			try {
+				Book book = crawler.crawlPage(newBookId + i);
+				if(book == null) {
+					break;
+				}
+				saveOrUpdateBook(book);
+				logger.info(String.format("crawled book {bookId: '%d', name: '%s'}]", book.getBookId(), book.getName()));
+			} catch (Exception e) {
+				logger.warn(e.getCause());
+			}
+		}
+	}
+	
+	public boolean hasNewBookToCrawl(Long latestBookId, int tryTimes, int step) {
+		ItEbooksCrawler crawler = new ItEbooksCrawler();
+		try {
+			Book newBook = crawler.crawlPage(latestBookId + 1);
+			boolean result = newBook != null;
+			if(!result && tryTimes > 1) {
+				return hasNewBookToCrawl(latestBookId + step, tryTimes - 1, step);
+			}
+			return result;
+		} catch (Exception e) {
+			logger.warn(e.getCause());
+			if(tryTimes > 1) {
+				return hasNewBookToCrawl(latestBookId + step, tryTimes - 1, step);
+			}
+			return false;
+		}
+	}
+	
+	private Book getLatestBook() {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("orderBy", " bookId desc ");
+		List<Book> list = bookDao.getBookListResult(0, 1, param);
+		return list.size() > 0? list.get(0): null;
 	}
 
 }
