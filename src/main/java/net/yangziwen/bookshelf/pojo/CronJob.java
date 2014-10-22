@@ -7,9 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import net.yangziwen.bookshelf.util.validation.Cron;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.support.CronTrigger;
 
@@ -19,19 +23,27 @@ public class CronJob {
 	
 	public static final String TYPE_ITEBOOKS = "itebooks";
 	
+	private static final String NAME_ERROR_MESSAGE = "请输入定时任务的名称!";
+	private static final String CRON_ERROR_MESSAGE = "请输入有效的cron表达式!";
+	
 	@Id
 	@GeneratedValue
 	@Column
 	private Long id;
 	@Column
+	@NotBlank(message = NAME_ERROR_MESSAGE)
 	private String name;
 	@Column
 	private String type;
 	@Column
+	
+	@NotBlank(message = CRON_ERROR_MESSAGE)
+	@Cron(message = CRON_ERROR_MESSAGE)
 	private String cron;
 	@Column(name="update_time")
 	private Timestamp updateTime;
 	@Column
+	@NotNull
 	private Boolean enabled;
 	
 	public Long getId() {

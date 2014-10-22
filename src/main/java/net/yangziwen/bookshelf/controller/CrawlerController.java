@@ -4,19 +4,21 @@ import java.sql.Timestamp;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.validation.Valid;
+
 import net.yangziwen.bookshelf.crawler.ItEbooksCrawler;
 import net.yangziwen.bookshelf.pojo.Book;
 import net.yangziwen.bookshelf.pojo.CronJob;
 import net.yangziwen.bookshelf.service.IBookService;
 import net.yangziwen.bookshelf.service.ICronJobService;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,28 +46,17 @@ public class CrawlerController {
 	
 	@ResponseBody
 	@RequestMapping(value="/editJob.do", method = RequestMethod.POST)
-	public Map<String, Object> editJob(CronJob crontJob) {
+	public Map<String, Object> editJob(@ModelAttribute @Valid CronJob crontJob, BindingResult bindingResult) {
 		ModelMap resultMap = new ModelMap();
-		if(!validateCron(crontJob.getCron())) {
-			resultMap.addAttribute("success", false).addAttribute("message", "请输入有效的cron表达式!");
+		if(bindingResult.hasErrors()) {
+			ObjectError error = bindingResult.getAllErrors().get(0);
+			resultMap.addAttribute("success", false).addAttribute("message", error.getDefaultMessage());
 			return resultMap;
 		}
 		crontJob.setType(CronJob.TYPE_ITEBOOKS);
 		crontJob.setUpdateTime(new Timestamp(System.currentTimeMillis()));
 		cronJobService.saveOrUpdateCronJob(crontJob);
 		return resultMap.addAttribute("success", true).addAttribute("message", "保存成功!");
-	}
-	
-	private boolean validateCron(String cronExpression) {
-		if(StringUtils.isBlank(cronExpression)) {
-			return false;
-		}
-		try {
-			new CronTrigger(cronExpression);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 
 	@ResponseBody
