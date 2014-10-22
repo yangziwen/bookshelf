@@ -223,7 +223,7 @@
 					<charset>UTF-8</charset>
 					<uriEncoding>UTF-8</uriEncoding>
 					<systemProperties>
-						<placeholder.jdbc>jdbc.properties</placeholder.jdbc>
+						<spring.profiles.active>development</spring.profiles.active>
 					</systemProperties>
 				</configuration>
 			</plugin>

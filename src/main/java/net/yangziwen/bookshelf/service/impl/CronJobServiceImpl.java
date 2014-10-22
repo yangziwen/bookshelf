@@ -30,7 +30,7 @@ public class CronJobServiceImpl implements ICronJobService {
 		cronJobDao.saveOrUpdate(job);
 		ScheduledFuture<?> scheduledFuture = cronJobScheduledFutureMap.remove(job.getId());
 		if(scheduledFuture != null) {
-			scheduledFuture.cancel(true);
+			scheduledFuture.cancel(false);
 		}
 		if(BooleanUtils.isFalse(job.getEnabled())) {
 			return;

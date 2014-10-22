@@ -119,7 +119,7 @@ public class BookServiceImpl implements IBookService {
 					break;
 				}
 				saveOrUpdateBook(book);
-				logger.info(String.format("crawled book {bookId: '%d', name: '%s'}]", book.getBookId(), book.getName()));
+				logger.info(String.format("crawled book {bookId: '%d', name: '%s'}", book.getBookId(), book.getName()));
 			} catch (Exception e) {
 				logger.warn(e.getCause());
 			}
